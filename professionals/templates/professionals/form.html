@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+ 
+</div>
+      <div class='container'>
+      <div class='row'>
+        <div class='col'>
+            
+            <div class='col-md-6 col-12 mx-auto'>
+               <h2>Join our professional network!</h2><br/>
+            <form class='contact-form' method='POST' action='{% url "contact" %}'> {% csrf_token %}
+            	<table>
+			    {{ form  }}
+			    {{ address_form }}
+			    </table><br/>
+
+			    <div class="text-center"> 
+                	<button type='submit' class='btn btn-dark'>Submit</button>
+                </div>
+            </form>
+
+            </div>
+        </div>
+      </div>
+
+
+{% endblock content %}

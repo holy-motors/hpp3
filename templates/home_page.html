@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<title>Home Page Template</title>>
+
+{% block base_head %}
+<link rel="stylesheet" href='{% static "css/main.css"  %}' >
+{% endblock %}
+
+
+{% block content %}
+<div class='text-center'>
+    <title>Hello, world!</title>
+  </head>
+  <body>
+	<h1>{{ title }}</h1>
+    <h1>Hello, world! We're working!</h1>
+	
+</div>
+<div class='container'>
+<div class='row'>
+ <div class='col'>
+	<img src='{% static "img/la_minerva.jpg" %}' class='img-fluid'/> 
+	<p>{{ content }}</p>
+ </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class='row'>
+ <div class='col'>
+	 <h1>Special Content Below</h1>
+	<p>{{ special_content }}</p>
+{% endif %}
+ </div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}
