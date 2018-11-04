@@ -1,1 +1,1 @@
-web: gunicorn salty-badlands-33652.wsgi
+web: gunicorn hpp2.wsgi
