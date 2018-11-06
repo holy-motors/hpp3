@@ -41,7 +41,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     email       = models.EmailField(max_length=255, unique=True)
     # full_name   = models.CharField(max_length=255, blank=True, null=True)
-    active      = models.BooleanField(default=True) # can login 
+    active      = models.BooleanField(default=True) # can login
+    is_pro      = models.BooleanField(default=False)
     staff       = models.BooleanField(default=False) # staff user non superuser
     admin       = models.BooleanField(default=False) # superuser 
     timestamp   = models.DateTimeField(auto_now_add=True)
@@ -92,3 +93,57 @@ class GuestEmail(models.Model):
         return self.email
 
 
+# class ProfessionalProfileQuerySet(models.query.QuerySet):
+#     def confirmable(self):
+#         #now = timezone.now()
+#         #start_range = now - timedelta(days=DEFAULT_ACTIVATION_DAYS)
+#         # does my object have a timestamp in here
+#         #end_range = now
+#         return self.filter(
+#                 activated = False
+#                 #forced_expired = False
+#                 )
+
+#               # ).filter(
+#               #   timestamp__gt=start_range,
+#               #   timestamp__lte=end_range
+#               # )
+
+
+# class ProfessionalProfileActivationManager(models.Manager):
+#     def get_queryset(self):
+#         return ProfessionalProfileQuerySet(self.model, using=self._db)
+
+#     def confirmable(self):
+#         return self.get_queryset().confirmable()
+
+
+# class ProfessionalProfileActivation(models.Model):
+#     user            = models.ForeignKey(User)
+#     email           = models.EmailField()
+#     activated       = models.BooleanField(default=False)
+#     timestamp       = models.DateTimeField(auto_now_add=True)
+#     update          = models.DateTimeField(auto_now=True)
+
+#     objects = ProfessionalProfileActivationManager()
+
+#     def __str__(self):
+#         return self.email
+
+#     def can_activate(self):
+#         qs = EmailActivation.objects.filter(pk=self.pk).confirmable() # 1 object
+#         if qs.exists():
+#             return True
+#         return False
+
+#     def activate(self):
+#         if self.can_activate():
+#             # pre activation user signal
+#             user = self.user
+#             user.is_active = True
+#             user.save()
+#             # post activation signal for user
+#             self.activated = True
+#             self.save()
+#             return True
+#         return False

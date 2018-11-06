@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
-from .models import GuestEmail
+from .models import GuestEmail #, ProfessionalProfileActivation
 # Register your models here.
 User = get_user_model()
 
@@ -20,8 +20,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'admin')
-    list_filter = ('admin', 'staff', 'active')
+    list_display = ('email', 'admin', 'is_pro')
+    list_filter = ('admin', 'staff', 'active', 'is_pro')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
        # ('Full name', {'fields': ()}),
@@ -53,5 +53,16 @@ class GuestEmailAdmin(admin.ModelAdmin):
     class Meta:
         model = GuestEmail
 
-
 admin.site.register(GuestEmail, GuestEmailAdmin)
+
+
+# class ProfessionalProfileActivationAdmin(admin.ModelAdmin):
+#     search_fields = ['email']
+#     class Meta:
+#         model = ProfessionalProfileActivation
+
+# admin.site.register(ProfessionalProfileActivation, ProfessionalProfileActivationAdmin)
+
+
+
+

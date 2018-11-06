@@ -1,13 +1,16 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect
-from django.views.generic import CreateView, FormView
+from django.views.generic import CreateView, FormView, View
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormMixin
 from django.utils.http import is_safe_url
 
 from addresses.forms import AddressForm
 from professionals.forms import ProfessionalProfileForm
+
+from billing.models import BillingProfile
 # from professionals.views import professional_profile_form_view
 
 from .forms import LoginForm, RegisterForm, GuestForm
@@ -16,6 +19,10 @@ from .models import GuestEmail
 
 # Create your views here.
 # ???
+# class ProfessionalProfileActivationView(FormMixin, View):
+
+
+
 class ProfessionalAccountHomeView(LoginRequiredMixin, DetailView):
     template_name = 'accounts/professional_home.html'
     def get_object(self):
@@ -27,6 +34,12 @@ class AccountHomeView(LoginRequiredMixin, DetailView):
     template_name = 'accounts/home.html'
     def get_object(self):
         return self.request.user
+
+#class ProfessionalProfileFormView(View):
+    ## Two goal - 1. is_pro = True, 2. save the ProfessinalProfile
+    # user = self.request.user
+
+
 
 
 def professional_profile_form_view(request):
@@ -57,11 +70,15 @@ def professional_profile_form_view(request):
     if form.is_valid():
         profile = form.save(commit=False)
         # Assign User ID to profile
-        profile.user = request.user
+        user = request.user
+        profile.user = user
         print(instance)
 
         profile.professional_address = instance
         profile.save()
+
+        user.is_pro = True
+        user.save()
 
     return render(request, "accounts/form.html", context)
 
