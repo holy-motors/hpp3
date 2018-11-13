@@ -6,7 +6,9 @@
 {% url 'cart:home' as cart_url %}
 {% url 'professionals:list' as pro_url %}
 {% url 'account:register' as pro_register_url %}
+{% url 'account:pro_home' as pro_home_url %}
 {% url 'account:home' as account_url %}
+
 
 {% load static %}
 
@@ -38,12 +40,23 @@
           Account
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a>
+          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">My Account</a>
           <a class="dropdown-item" href="#">Billing</a>
           <a class="dropdown-item" href="#">Preferences</a>
           <a class="dropdown-item" href="#">History</a>
           <div class="dropdown-divider"></div>
+          
+          
+          {% if not request.user.is_pro %}
+          
           <a class="dropdown-item" href="{{ pro_register_url }}">Register as Professionals!</a>
+
+          {% else %}
+                   <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{{ pro_home_url }}">Professional Page</a>
+
+          {% endif %}
+
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
         </div>
@@ -63,6 +76,9 @@
       <li class="nav-item {% if request.path == cart_url %}active{% endif %}">
         <a class="nav-link" href="{{ cart_url }}"><span class='navbar-cart-count'>{{ request.session.cart_items }}</span> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
       </li>
+
+  
+
 
     </ul>
     {% include 'search/snippets/search-form.html' %}
