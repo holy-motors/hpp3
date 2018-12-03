@@ -6,15 +6,18 @@ from django.views.generic import CreateView, FormView, View, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
+from django.urls import reverse
 from django.utils.http import is_safe_url
 
 from addresses.forms import AddressForm
 from professionals.forms import ProfessionalProfileForm
+from professionals.models import ProfessionalProfile
+from customers.models import CustomerProfile
 
 from billing.models import BillingProfile
 # from professionals.views import professional_profile_form_view
 
-from .forms import LoginForm, RegisterForm, GuestForm, UserDetailChangeForm
+from .forms import LoginForm, RegisterForm, GuestForm, UserDetailUpdateForm, ProfessionalDetailUpdateForm, ProfessionalAddressUpdateForm
 from .models import GuestEmail
 
 
@@ -24,10 +27,24 @@ from .models import GuestEmail
 
 
 
-class ProfessionalAccountHomeView(LoginRequiredMixin, DetailView):
+class ProfessionalAccountHomeView(LoginRequiredMixin, ListView):
     template_name = 'accounts/professional_home.html'
     def get_object(self):
         return self.request.user
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProfessionalAccountHomeView, self).get_context_data(*args, **kwargs)
+        query = self.request.GET.get('q')
+        context['query'] = query
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        method_dict = request.GET
+        query = method_dict.get('q', None) # method_dict['q']
+        if query is not None:
+            return CustomerProfile.objects.search(query)
+        return CustomerProfile.objects.all()
 
 
 #LoginRequiredMixin,
@@ -144,7 +161,7 @@ class RegisterView(CreateView):
 
 
 class UserDetailUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = UserDetailChangeForm
+    form_class = UserDetailUpdateForm
     template_name = 'accounts/detail-update-view.html'
 
     def get_object(self):
@@ -157,3 +174,65 @@ class UserDetailUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("account:home")
+
+
+class ProfessionalDetailUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = ProfessionalDetailUpdateForm
+    template_name = 'accounts/pro-detail-update-view.html'
+
+    def get_object(self):
+        pro_obj = ProfessionalProfile.objects.get(user=self.request.user)
+        return pro_obj
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProfessionalDetailUpdateView, self).get_context_data(*args, **kwargs)
+        context['title'] = 'Change Your Professional Details'
+        return context
+
+    def get_success_url(self):
+        return reverse("account:pro_home")
+
+
+
+class TestView(LoginRequiredMixin, UpdateView):
+    form_class        = ProfessionalDetailUpdateForm
+    second_form_class = ProfessionalAddressUpdateForm
+    template_name     = 'accounts/testview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TestView, self).get_context_data(**kwargs)
+        context['title'] = 'Change Your Professional Details'
+
+        if 'form' not in context:
+            context['form'] = self.form_class()
+        if 'form2' not in context:
+            context['form2'] = self.second_form_class()
+        return context
+
+    def get(self, request, **kwargs):
+        super(TestView, self).get(request, **kwargs)
+        form  = self.form_class
+        form2 = self.second_form_class
+        return self.render_to_response(self.get_context_data(object=self.object, form=form, form2=form2))
+
+    def post(self, request, **kwargs):
+        self.object = self.get_object()
+        form  = self.form_class(request.POST)
+        form2 = self.second_form_class(request.POST)
+
+        if form.is_valid() and form2.is_valid():
+            pro_address = form2.save(commit=False)
+            # used to set the password, but no longer necesarry
+            pro_address.save()
+            profile = form2.save(commit=False)
+            profile.address = pro_address
+            profile.save()
+            messages.success(self.request, 'Settings saved successfully')
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(
+              self.get_context_data(form=form, form2=form2))
+
+
+    def get_success_url(self):
+        return reverse("account:pro_home")

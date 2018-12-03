@@ -21,6 +21,7 @@ from django.views.generic import RedirectView
 
 from accounts.views import LoginView, RegisterView
 from addresses.views import checkout_address_create_view, checkout_address_reuse_view
+from billing.views import payment_method_view, payment_method_createview
 from carts.views import cart_detail_api_view
 # from professionals.views import professional_profile_form_view
 
@@ -33,12 +34,15 @@ urlpatterns = [
     url(r'^professionals/', include('professionals.urls', namespace='professionals')),
     url(r'^accounts/$', RedirectView.as_view(url='/account')),
     url(r'^account/', include("accounts.urls", namespace='account')),
+    url(r'^accounts/', include('accounts.passwords.urls')),
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^checkout/address/create/$', checkout_address_create_view, name='checkout_address_create'),
     url(r'^checkout/address/reuse/$', checkout_address_reuse_view, name='checkout_address_reuse'),
     url(r'^cart/', include("carts.urls", namespace='cart')),
+    url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),
+    url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
     url(r'^api/cart/$', cart_detail_api_view, name='api-cart'),
     url(r'^search/', include("search.urls", namespace='search')),
     

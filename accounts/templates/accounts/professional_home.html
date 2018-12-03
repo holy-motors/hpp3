@@ -7,8 +7,49 @@
 <hr/>
 </div>
 
+<div class="container-fluid">
+ <div class='row  mb-3'>
+            <div class='col-12 col-md-6 mx-auto py-5'>
+               {% include 'search/snippets/customer-search-form.html' %}
+
+            </div>
+
+            {% if query %}
+            <div class='col-12'>
+                <hr>
+            </div>
+            <div class='col-12' >
+                Results for <b>{{ query }}</b>
+                <hr/>
+            </div>
+
+            {% else %}
 
 
+            {% endif %}
+</div>
+
+<div class='row'>
+    <div class='col'>
+        <table class='table'>
+            <thead><th>Name</th><th>Customer ID</th></thead>
+
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.full_name | title }}</td>
+                        <td>{{ object.customer_id }}</td>
+                        
+                    </tr>
+                {% empty %}
+                <tr><td colspan="3"><p class='lead'>No customer found.</td></tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+</div>
 
 
 <div class='col-12 col-md-3 my-3'>
@@ -16,8 +57,8 @@
       <div class="card-body">
         <h4 class="card-title">My Profile</h4> 
             <div class='list-group'>
-                <a class='list-group-item' href='#'>Name</a>
-                <a class='list-group-item' href='#'>Reset Password</a>
+                <a class='list-group-item' href='{% url "account:pro-update" %}'>Update Professional Details</a>
+
                 
             </div>
 

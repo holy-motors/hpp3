@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 # from products.models import Product
 from professionals.models import ProfessionalProfile
+#from customers.models import CustomerProfile
 
 class SearchProductView(ListView):
     template_name = "search/view.html"
@@ -24,3 +25,5 @@ class SearchProductView(ListView):
         __icontains = field contains this
         __iexact = fields is exactly this
         '''
+
+#class SearchCustomerView(ListView):

@@ -1,9 +1,20 @@
 from django import forms
+from django.core.validators import RegexValidator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
+from professionals.models import ProfessionalProfile
+from addresses.models import Address
+
 
 User = get_user_model()
+
+SPECIALITY_TYPES = (
+    ( 'dental', 'Dental'),
+    ( 'vision', 'Vision'),
+    ( 'physical', 'Physical'),
+    ( 'psychological', 'Psychological'),    
+    )
 
 
 class UserAdminCreationForm(forms.ModelForm):
@@ -60,12 +71,54 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-class UserDetailChangeForm(forms.ModelForm):
+class UserDetailUpdateForm(forms.ModelForm):
     full_name = forms.CharField(label='Name', required=False, widget=forms.TextInput(attrs={"class": 'form-control'}))
 
     class Meta:
         model = User
         fields = ['full_name']
+
+
+class ProfessionalDetailUpdateForm(forms.ModelForm):
+    email     = forms.EmailField(label='Email', required=False)
+    full_name       = forms.CharField(label='Professional Name', required=False, widget=forms.TextInput(attrs={"class": 'form-control'}))
+    phone_regex     = RegexValidator(regex=r'^\+?1?\d{8,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number    = forms.CharField(label='Phone Number', required=False, validators=[phone_regex], max_length=16)
+    speciality      = forms.ChoiceField(label='Speciality', required=False, choices=SPECIALITY_TYPES)
+    description     = forms.CharField(label='Description', required=False, widget=forms.Textarea())
+
+
+    class Meta:
+        model = ProfessionalProfile
+        fields = [
+            'full_name',
+            'email',
+            'phone_number',
+            
+            'speciality',
+            'description',
+            # 'professional_address',
+        ]
+
+
+class ProfessionalAddressUpdateForm(forms.ModelForm):
+    address_line_1 = forms.CharField(label='Addresses', required=False)
+    address_line_2 = forms.CharField(label='Addresses', required=False)
+    city           = forms.CharField(label='City', required=False)
+    state          = forms.CharField(label='State', required=False)
+    country        = forms.CharField(label='Country', required=False)
+    postal_code    = forms.CharField(label='Postal Code', required=False)
+
+    class Meta:
+        model = Address
+        fields = [
+            'address_line_1',
+            'address_line_2',
+            'city',
+            'state',
+            'country',
+            'postal_code',
+        ]
 
 
 class RegisterForm(forms.ModelForm):

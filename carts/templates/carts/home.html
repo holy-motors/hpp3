@@ -1,5 +1,6 @@
-{% extends "base.html" %}
 
+{% extends "base.html" %}
+{% url "cart:checkout" as checkout_url %}
 
 {% block content %}
 <h1>Cart</h1>
@@ -17,7 +18,7 @@
     {% for product in cart.products.all %}
     <tr class='cart-product'>
       <th scope="row">{{ forloop.counter }}</th>
-      <td><a href='{{ product.get_absolute_url }}'>{{ product.plan | title }}</a> 
+      <td><a href='{{ product.get_absolute_url }}'>{{ product.plan | title }}</a> <br>
         {% include 'carts/snippets/remove-product.html' with product_id=product.id %}
       </td>
       <td>{{ product.price }}</td>
@@ -33,7 +34,7 @@
     </tr>
     <tr>
       <td colspan="2"></td>
-      <td><a class='btn btn-lg btn-success' href='{% url "cart:checkout" %}'>Checkout</a></td>
+      <td><a class='btn btn-lg btn-success' href="{{ checkout_url }}">Checkout</a></td>
     </tr>
 
   </tbody>

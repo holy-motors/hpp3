@@ -2,6 +2,7 @@ from django import forms
 
 from .models import ProfessionalProfile
 
+
 class ProfessionalProfileForm(forms.ModelForm):
 	class Meta:
 		model = ProfessionalProfile

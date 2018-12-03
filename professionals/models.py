@@ -52,12 +52,7 @@ class ProfessionalProfileManager(models.Manager):
         return self.get_queryset().active()
 
     def search(self, query):
-        lookups = (Q(address__country__icontains=query) | 
-          Q(address__city__icontains=query) |
-          Q(description__icontains=query) |
-          Q(full_name__icontains=query) 
-          )
-        return self.filter(lookups).distinct()
+        return self.get_queryset().search(query)
 
 
 class ProfessionalProfile(models.Model):
